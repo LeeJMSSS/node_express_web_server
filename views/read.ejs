@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="/javascripts/jquery-1.11.2.min.js"></script>
+    <title><%=row[0].title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css'/>
+</head>
+<body>
+<h1><%= row[0].title  %></h1>
+
+
+    <table border="1">
+        <tr>
+            <td>작성자</td>
+             <td> <%=row[0].creator_id%></td>
+            
+        </tr>
+        <tr>
+            <td>제목</td>
+            <td><p><%=row[0].title%></p></td>
+        </tr>
+        <tr>
+           
+            <td>내용</td>
+              <td><p><%=row[0].contents%></p></td>
+        </tr>
+        <a href="/board/"> 목록으로  </a>
+    </table>
+</body>
+</html>
+
