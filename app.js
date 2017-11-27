@@ -276,8 +276,14 @@ router.route('/process/adduserpage').get(function(req,res){
 
 
 app.all('/',function(req,res){
-   res.redirect('/index') ;
+   res.render('log_in', {
+        
+        
+    });
+
+    //res.redirect('/index') ;
 });
+
 app.use('/board',board);
 app.use('/',router);
 app.use(expressErrorHandler.httpError(404));
