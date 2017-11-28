@@ -11,6 +11,7 @@ var board = require('./board');
 var mysql =  require('mysql');
 
 
+
 var expressErrorHandler =  require('express-error-handler');
 
 var expressSession = require('express-session');
@@ -48,7 +49,8 @@ var pushSubscription = {
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
-
+app.use('/css', express.static(__dirname + '/css'));
+app.use('/js', express.static(__dirname + '/js'));
 
 app.set('port',process.env.PORT||9000);
 app.use(bodyParser.urlencoded({extended:false}));
@@ -276,7 +278,7 @@ router.route('/process/adduserpage').get(function(req,res){
 
 
 app.all('/',function(req,res){
-   res.render('log_in', {
+   res.render('cover', {
         
         
     });
