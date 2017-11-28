@@ -1,14 +1,80 @@
-<html>
-    <head>
-     <h1>index page</h1></head>
-    <body>
-        
-        <h1>index page</h1>
-        <form method="post" action="/login">
-            <input type="submit" value="로그인" name="">
-        </form>
-        
-        <a href =  /process/adduserpage>사용자 추가 </a>
-        
-    </body>
+
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8">
+    <title>트위터의 부트스트랩</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- 스타일 -->
+    <link href="css/bootstrap-ko.css" rel="stylesheet">
+    <style>
+      body {
+        padding-top: 60px; /* 본문이 겹치지 않고 탐색막대 하단에 붙게 만드는 60px */
+      }
+    </style>
+    <link href="css/bootstrap-responsive.css" rel="stylesheet">
+
+    <!-- IE6~8에서 HTML5 태그를 지원하기위한 HTML5 shim -->
+    <!--[if lt IE 9]>
+      <script src="../assets/js/html5shiv.js"></script>
+    <![endif]-->
+
+    <!-- 파비콘과 앱 아이콘 -->
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="../assets/ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="../assets/ico/apple-touch-icon-114-precomposed.png">
+      <link rel="apple-touch-icon-precomposed" sizes="72x72" href="../assets/ico/apple-touch-icon-72-precomposed.png">
+                    <link rel="apple-touch-icon-precomposed" href="../assets/ico/apple-touch-icon-57-precomposed.png">
+                                   <link rel="shortcut icon" href="../assets/ico/favicon.png">
+  </head>
+
+  <body>
+
+    <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="brand" href="#">프로젝트명</a>
+          <div class="nav-collapse collapse">
+            <ul class="nav">
+              <li class="active"><a href="#">대문</a></li>
+              <li><a href="#about">소개</a></li>
+              <li><a href="#contact">연락처</a></li>
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <h1>부트스트랩 시작 틀</h1>
+      <p>이 문서를 사용하여 새 프로젝트를 빨리 시작할 수 있다.<br> 이 문구와 HTML 문서 골격이 전부이다.</p>
+
+    </div> <!-- /container -->
+
+    <!-- 자바스크립트
+    ================================================== -->
+    <!-- 페이지를 빨리 읽어들이도록 문서 마지막에 배치 -->
+    <script src="js/jquery.js"></script>
+    <script src="js/bootstrap-transition.js"></script>
+    <script src="js/bootstrap-alert.js"></script>
+    <script src="js/bootstrap-modal.js"></script>
+    <script src="js/bootstrap-dropdown.js"></script>
+    <script src="js/bootstrap-scrollspy.js"></script>
+    <script src="js/bootstrap-tab.js"></script>
+    <script src="js/bootstrap-tooltip.js"></script>
+    <script src="js/bootstrap-popover.js"></script>
+    <script src="js/bootstrap-button.js"></script>
+    <script src="js/bootstrap-collapse.js"></script>
+    <script src="js/bootstrap-carousel.js"></script>
+    <script src="js/bootstrap-typeahead.js"></script>
+
+  </body>
 </html>
