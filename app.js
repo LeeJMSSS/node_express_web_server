@@ -174,11 +174,14 @@ app.get('/process/logout',function(req,res){
 var router = express.Router();
 
 router.route('/index').all(function (req,res){
-    webpush.sendNotification(pushSubscription, 'ddd');
+  
     if(req.session.user){
         res.redirect('/board');
         return;
     }
+    res.render('log_in', {
+         
+    });/*
     var pathname  = '/log_in.html';
     var extension = path.extname(pathname); // 확장자를 구하는 메서드
     var staticMap = {
@@ -204,7 +207,8 @@ router.route('/index').all(function (req,res){
                 res.writeHead(404, {'Content-Type': 'text/html'+';charset=utf-8'});
                 res.end(data);
             });
-        }
+        }*/
+    
 });
 var get_static_map = function(pathname){
     var extension = path.extname(pathname); // 확장자를 구하는 메서드
@@ -269,21 +273,26 @@ router.route('/process/adduser').post(function(req,res){
                 });
 router.route('/process/adduserpage').get(function(req,res){
     console.log('adduserpage');
-    var staticPath = __dirname + '/public';
-      fs.readFile( staticPath+'/adduser.html', (err, data) => {
-                res.writeHead(200, {'Content-Type': 'text/html'+';charset=utf-8'});
-                res.end(data);
-            });
-});
-
-
-app.all('/',function(req,res){
-   res.render('cover', {
+     res.render('sign_up', {
         
         
     });
 
-    //res.redirect('/index') ;
+   /* var staticPath = __dirname + '/public';
+      fs.readFile( staticPath+'/adduser.html', (err, data) => {
+                res.writeHead(200, {'Content-Type': 'text/html'+';charset=utf-8'});
+                res.end(data);
+            });*/
+});
+
+
+app.all('/',function(req,res){
+//   res.render('log_in', {
+        
+        
+  //  });
+
+    res.redirect('/index') ;
 });
 
 app.use('/board',board);
