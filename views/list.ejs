@@ -28,7 +28,7 @@
      <tr>
         <td><%=oneItem.idx%></td>
         <td><%=oneItem.creator_id%></td>
-        <td><a href=/board/read/<%=oneItem.idx%>> <%=oneItem.title%></a></td>
+        <td><a href=/board/read/<%=oneItem.idx%>> <%=oneItem.title+"  ["+oneItem.upload_file_count+"]"%> </a></td>
         <td><%=oneItem.hit%></td>
         <td><%=oneItem.modidate%></td>
     </tr>

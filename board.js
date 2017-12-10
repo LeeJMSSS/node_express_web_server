@@ -2,13 +2,15 @@ var express = require('express');
 var router = express.Router();
 var mysql = require('mysql');
 var expressSession = require('express-session');
+var mkdir = require('mkdirp'); 
+var fs = require('fs');
 
 var pool = mysql.createPool({
     connectionLimit: 3,
     host: 'localhost',
     user: 'root',
-    database: 'splug',
-    password: 'wjswocjf20'
+    database: '',
+    password: ''
 });
 
 var multer = require('multer');
@@ -16,12 +18,22 @@ var upload = multer({
     dest: 'uploads'
 });
 var storage = multer.diskStorage({
+  date:function(req,file,callback){
+    callback(null,Date.now());
+},
     destination: function (req, file, callback) {
+        
         callback(null, 'uploads/')
     },
+    
     filename: function (req, file, callback) {
-        callback(null, req.session.user.id + '__' + Date.now()+'__filename__'+file.originalname)
+        
+        callback(null, file.originalname)
+    },
+    originalname :  function(req,file,callback){
+              callback(null,file.originalname)
     }
+
 });
 var upload = multer({
     storage: storage
@@ -40,6 +52,13 @@ router.get('/write', function (req, res, next) {
         id: req.session.user.id
     });
 });
+var upload_file_search= function(paths,err){
+    
+        var files  = fs.readdirSync( paths );  // 하위 폴더 내 파일 검색
+    console.dir(files)
+return files;
+    
+};
 
 router.post('/write', upload.array('file'), function (req, res) {
     var creator_id = req.session.user.id;
@@ -49,16 +68,24 @@ router.post('/write', upload.array('file'), function (req, res) {
 
     var files = req.files;
     var upload_file_path = '';
-    
+    var orginal_file_name ='';
+    var date = Date.now();
+   
     if (files.length>0) {
-        
-        upload_file_path = files[0].filename;
-        console.log(upload_file_path);
+        var directory = './uploads/board/'+date+"_"+req.session.user.id+"/";
+        mkdir(directory);
+        var rows =  files.length;
+        for(var  i = 0 ; i<rows;i++){
+        fs.rename('./uploads/'+files[i].filename, directory+files[i].filename, function (err) {
+                if (err) throw err;
+                console.log('renamed complete');
+});
+            }
     }
-    var datas = [creator_id, title, content, passwd,upload_file_path];
+    var datas = [creator_id, title, content, passwd,directory,rows];
     pool.getConnection(function (err, connection) {
         // Use the connection
-        var sqlForInsertBoard = "insert into board(creator_id, title, contents,creator_pwd,upload_file_path) values(?,?,?,?,?);";
+        var sqlForInsertBoard = "insert into basic_board(creator_id,creator_pwd, title, contents,upload_file_path,upload_file_count) values(?,?,?,?,?,?);";
 
         connection.query(sqlForInsertBoard, datas, function (err, rows) {
             if (err) console.error("err : " + err);
@@ -77,10 +104,10 @@ router.get('/list/:page', function (req, res, next) {
         return;
     }
     pool.getConnection(function (err, connection) {
-        var query = "SELECT idx, creator_id , title FROM board"
+        var query = "SELECT idx, creator_id ,upload_file_count, title FROM basic_board"
         connection.query(query, function (err, rows) {
             if (err) console.error(err);
-
+            console.dir(rows);
             res.render('list', {
                 title: '게시판 전체 글 조회',
                 rows: rows
@@ -98,15 +125,20 @@ router.get('/read/:idx', function (req, res) {
     }
 
     pool.getConnection(function (err, connection) {
-        var query = "SELECT creator_id,title,contents FROM board where idx=" + req.params.idx;
+        var query = "SELECT creator_id,title,contents,upload_file_path FROM basic_board where idx=" + req.params.idx;
         connection.query(query, function (err, rows) {
             if (err) console.error(err);
-            res.render('read', {
-                row: rows
-            });
             connection.release();
+            console.dir(rows);
+            var files = upload_file_search(rows[0].upload_file_path);
+                res.render('read', {
+                row: rows,
+                files:  files
+            });
+        
         });
     });
 });
+router.get('/download/:path')
 
 module.exports = router;

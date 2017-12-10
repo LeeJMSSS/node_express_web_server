@@ -4,6 +4,9 @@
     <script src="/javascripts/jquery-1.11.2.min.js"></script>
     <title><%= title %></title>
     <link rel='stylesheet' href='/stylesheets/style.css'/>
+    <script type="text/javascript">
+            var d = new Date();
+    </script>
 </head>
 <body>
 <h1><%= title %></h1>
@@ -27,7 +30,7 @@
         
         <tr>       
             <td>첨부파일</td>
-            <td><input type="file" name="file" id="file" /></td>
+            <td><input type="file" name="file" id="file"  multiple="multiple" /></td>
         </tr>
         <tr>       
             <td>패스워드</td>
