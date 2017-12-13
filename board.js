@@ -59,7 +59,6 @@ var upload_file_search= function(paths,err){
 return files;
     
 };
-
 router.post('/write', upload.array('file'), function (req, res) {
     var creator_id = req.session.user.id;
     var title = req.body.title;
@@ -96,8 +95,9 @@ router.post('/write', upload.array('file'), function (req, res) {
     });
     upload.single(files);
 });
-router.get('/list/:page', function (req, res, next) {
 
+router.get('/list/:page', function (req, res, next) {
+    
     if (!req.session.user) {
         res.redirect('/index');
         res.end();
@@ -117,6 +117,27 @@ router.get('/list/:page', function (req, res, next) {
     });
 });
 
+router.get('/download/:idx/:path',function(req,res,next){
+    var idx = req.params.idx;
+    
+   console.dir(req.params.idx);
+    if(!req.session.user){
+        res.redirect('/index');
+        res.end();
+        return;
+    }
+    pool.getConnection(function (err, connection) {
+        var query = "SELECT upload_file_path FROM basic_board where idx=" + idx;
+        connection.query(query, function (err, rows) {
+            if (err) console.error(err);
+            connection.release();
+            var paths  = __dirname+"/"+rows[0].upload_file_path+req.params.path;
+            console.dir(paths);
+            res.download(paths);
+        });
+    });
+});
+
 router.get('/read/:idx', function (req, res) {
     if (!req.session.user) {
         res.redirect('/index');
@@ -125,11 +146,11 @@ router.get('/read/:idx', function (req, res) {
     }
 
     pool.getConnection(function (err, connection) {
-        var query = "SELECT creator_id,title,contents,upload_file_path FROM basic_board where idx=" + req.params.idx;
+        var query = "SELECT idx,creator_id,title,contents,upload_file_path FROM basic_board where idx=" + req.params.idx;
         connection.query(query, function (err, rows) {
             if (err) console.error(err);
             connection.release();
-            console.dir(rows);
+          
             var files = upload_file_search(rows[0].upload_file_path);
                 res.render('read', {
                 row: rows,
@@ -139,6 +160,6 @@ router.get('/read/:idx', function (req, res) {
         });
     });
 });
-router.get('/download/:path')
+
 
 module.exports = router;
