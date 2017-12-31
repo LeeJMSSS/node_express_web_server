@@ -10,8 +10,7 @@ var pool = mysql.createPool({
     connectionLimit: 3,
     host: 'localhost',
     user: 'root',
-    database: 'splug',
-    password: 'wjswocjf20'
+ 
 });
 
 var multer = require('multer');
