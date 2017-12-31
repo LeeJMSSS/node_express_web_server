@@ -1,216 +1,196 @@
-var express = require('express')
-,http  =require('http'),
-    path =require('path');
+var express = require('express'),
+    http = require('http'),
+    path = require('path');
 var bodyParser = require('body-parser'),
-    cookieParser =require('cookie-parser'),
-    static  =  require('serve-static'),
-    errorHandler =  require('errorhandler'),
+    cookieParser = require('cookie-parser'),
+    static = require('serve-static'),
+    errorHandler = require('errorhandler'),
     fs = require('fs');
 
 var board = require('./board');
-var mysql =  require('mysql');
+var open_home = require('./open_home/open_home');
 
-
-
-var expressErrorHandler =  require('express-error-handler');
-
+var mysql = require('mysql');
+var expressErrorHandler = require('express-error-handler');
 var expressSession = require('express-session');
-
 var app = express();
 
 var pool = mysql.createPool({
-    coonectionLimit :10,
-    host:'localhost',
-    user : 'root',
+    coonectionLimit: 10,
+    host: 'localhost',
+    user: 'root',
     password: 'wjswocjf20',
-    database:'splug',
-    debug :false
+    database: 'splug',
+    debug: false
 });
 
 var webpush = require('web-push');
- 
+
 // VAPID keys should only be generated only once.
+
+
+webpush.setGCMAPIKey('AIzaSyAaFpzkYM9tO-vxg-1AKEOyQN24a_ZaTQk');
 var vapidKeys = webpush.generateVAPIDKeys();
- 
-webpush.setGCMAPIKey('AIzaSyAo5_T1k9dCUGYqZdzCLFhbq1xXK4ZG-m8');
 webpush.setVapidDetails(
-  'mailto:example@yourdomain.org',
-  vapidKeys.publicKey,
-  vapidKeys.privateKey
+    'mailto:localhost:9000',
+    vapidKeys.publicKey,
+    vapidKeys.privateKey
 );
- 
+
 var pushSubscription = {
-  endpoint: '.....',
-  keys: {
-    auth: '.....',
-    p256dh: '.....'
-  }
+    endpoint: 'http://localhost:9000/index',
+    keys: {
+        auth: '.....',
+        p256dh: '.....'
+    }
 };
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
+app.use('/open_home_resource', express.static(__dirname + '/public/open_home'));
+app.use('/css', express.static(__dirname + '/public/css'));
 
-app.use('/css', express.static(__dirname + '/css'));
-app.use('/js', express.static(__dirname + '/js'));
+app.use('/js', express.static(__dirname + '/public/js'));
+app.use('/vendor', express.static(__dirname + '/public/vendor'));
+app.use('/scss', express.static(__dirname + '/public/scss'));
+app.use('/img', express.static(__dirname + '/public/img'));
 
-app.set('port',process.env.PORT||9000);
-app.use(bodyParser.urlencoded({extended:false}));
+app.set('port', process.env.PORT || 9000);
+app.use(bodyParser.urlencoded({
+    extended: false
+}));
 app.use(bodyParser.json());
 
 
-app.use('/public',static(path.join(__dirname,'public')));
+app.use('/public', static(path.join(__dirname, 'public')));
 app.use(cookieParser());
 
 app.use(expressSession({
     key: 'jeon_id',
-    secret:'ambc@!vsmkv#!&*!#EDNAnsv#!$()_*#@',
-    resave:false,
-    saveUninitialized:true
+    secret: 'ambc@!vsmkv#!&*!#EDNAnsv#!$()_*#@',
+    resave: false,
+    saveUninitialized: true
 }));
 
 
-var authUser =  function(id,password,callback){
+var authUser = function (id, password, callback) {
     console.log('auth User');
-    pool.getConnection(function(err,conn){
-       if(err){
-           if(conn){
-               conn.release();
-           }
-           callback(err,null);
-           return;
-       } 
-    
-    console.log('데이터 베이스 Thread id '+conn.threadId);
-    var columns  = ['member_id','member_name'];
-    var tablename =  'member';
-    var exec = conn.query("select ?? from member where member_id = ? and member_pwd =?",
-                          [columns,id,password],function(err,rows){
-        conn.release();
-        console.log('실행 대상 ' + exec.sql);
-        
-        console.dir(rows);
-        if(rows.length>0){
-        callback(null,rows);    
-        }
-        else{
-            callback(null,null);
-        
-        }
-    
-    });
-    });
-}
-                       
-var adduser = function(id,password,name,callback){
-    console.log('add user');        
-    pool.getConnection(function(err,conn){
-        if(err){
-            if(conn){
+    pool.getConnection(function (err, conn) {
+        if (err) {
+            if (conn) {
                 conn.release();
             }
-            callback(err,null);
+            callback(err, null);
             return;
         }
-        console.log('데이터 베이스 연결 스레드 id' + conn.threadId);
-        var data =  {member_id:id,member_name:name,member_pwd:password,member_phone:'010',member_student_id:'22'};
-        var exec = conn.query('insert into member set ?; ',data,function(err,result){
+        console.log('데이터 베이스 Thread id ' + conn.threadId);
+        var columns = ['member_id', 'member_name', 'auth'];
+        var tablename = 'member';
+        var exec = conn.query("select ?? from member where member_id = ? and member_pwd =?", [columns, id, password], function (err, rows) {
             conn.release();
             console.log('실행 대상 ' + exec.sql);
-            if(err){
-                console.log('err');
-                callback(err,all);
+            console.dir(rows);
+
+            if (rows.length > 0) {
+                callback(null, rows);
+            } else {
+                callback(null, null);
+
             }
-            
-            callback(null,result);
-            
-            
+
         });
     });
 }
 
-app.post('/process/login',function(req,res){
-   var paramId = req.param('id');
-   var password = req.param('password');
+var adduser = function (id, password, real_name, user_name, student_id, phone, blog, email, callback) {
+    console.log('add user');
+    pool.getConnection(function (err, conn) {
+        if (err) {
+            if (conn) {
+                conn.release();
+            }
+            callback(err, null);
+            return;
+        }
+        console.log('데이터 베이스 연결 스레드 id' + conn.threadId);
+        var data = {
+            member_id: id,
+            member_name: real_name,
+            member_user_name: user_name,
+            member_pwd: password,
+            student_id: student_id,
+            phone: phone,
+            blog: blog,
+            email: email,
+            auth: 3
+        };
+        var exec = conn.query('insert into member set ?; ', data, function (err, result) {
+            conn.release();
+            console.log('실행 대상 ' + exec.sql);
+            if (err) {
+                console.log('err');
+                callback(err, all);
+            }
+            callback(null, result);
+        });
+    });
+}
+
+
+
+app.post('/process/login', function (req, res) {
+    var paramId = req.param('id');
+    var password = req.param('password');
     console.log(paramId);
-    if(pool){
-        authUser(paramId,password,function(err,rows){
-            if(err){
-                res.writeHead('200',{'content-type':'text/html;charset = utf-8'});
+    if (pool) {
+        authUser(paramId, password, function (err, rows) {
+            if (err) {
+                res.writeHead('200', {
+                    'content-type': 'text/html;charset = utf-8'
+                });
                 res.write("<h1>error</h1>");
                 res.end();
                 return;
             }
-            
-            if(rows){
-                   req.session.user={
-                       
-                id:paramId,
-                password:password,
-                name : rows.name,
-                authorized:true
-            };
 
-            
-                res.redirect('/board');
-                
-            }
-            else{
-res.writeHead('200',{'content-type':'text/html;charset = utf-8'});
-                res.write("<h1>사용자 없음</h1>");
-                res.end();
-                
+            if (rows) {
+                if (rows[0].auth == 3) {
+                    res.send('<script type="text/javascript">alert("가입 완료 관리자 승인 후 사용 가능합니다~!");</script><script type="text/javascript"> location.href="/process/login_page"; </script>');
+                    return;
+                } else {
+                    req.session.user = {
+
+                        id: paramId,
+                        password: password,
+                        name: rows.name,
+                        authorized: true
+                    };
+                    res.redirect('/open_home');
+                }
+            } else {
+                res.send('<script type="text/javascript">alert("Please Check Username or Password");</script><script type="text/javascript"> location.href="/process/login_page"; </script>');
             }
         })
     }
-    
 });
 
-app.get('/process/logout',function(req,res){
-   req.session.destroy();
+
+app.get('/process/logout', function (req, res) {
+    req.session.destroy();
     res.clearCookie('jeon_id');
     res.redirect('/index');
 });
-
-
 var router = express.Router();
 
-router.route('/index').all(function (req,res){
-  
-    if(req.session.user){
-        res.redirect('/board');
-        return;
-    }
-    res.render('log_in', {
-         
-    });/*
-    var pathname  = '/log_in.html';
-    var extension = path.extname(pathname); // 확장자를 구하는 메서드
-    var staticMap = {
-        '.ico': 'image/x-icon',
-        '.html': 'text/html',
-        '.js': 'text/javascript',
-        '.json': 'application/json',
-        '.css': 'text/css',
-        '.png': 'image/png',
-        '.jpg': 'image/jpeg',
-        '.mp3': 'audio/mpeg',
-    }
-    var staticPath = __dirname + '/public';
-　console.log(staticPath);
-        if( staticMap[extension] ) {
-            //static file
-            fs.readFile( staticPath + pathname, (err, data) => {
-                res.writeHead(200, {'Content-Type': staticMap[extension]+';charset=utf-8'});
-                res.end(data);
-            });
-        } else {
-            fs.readFile('./public/404.html', (err, data) => {
-                res.writeHead(404, {'Content-Type': 'text/html'+';charset=utf-8'});
-                res.end(data);
-            });
-        }*/
-    
+router.route('/index').all(function (req, res) {
+    // registerServiceWorker();
+    //    askPermission();
+    console.log("get client");
+    res.render('cover2', {
+
+    });
+
 });
-var get_static_map = function(pathname){
+var get_static_map = function (pathname) {
     var extension = path.extname(pathname); // 확장자를 구하는 메서드
     var staticMap = {
         '.ico': 'image/x-icon',
@@ -223,84 +203,167 @@ var get_static_map = function(pathname){
         '.mp3': 'audio/mpeg',
     }
     return staticMap[extension];
-    
+
 }
-router.route('/notice').all(function (req,res){
-   
-    var pathname =  '/notice.html';
-    var type =  get_static_map(pathname);
+router.route('/notice').all(function (req, res) {
+
+    var pathname = '/notice.html';
+    var type = get_static_map(pathname);
     console.log(type);
     res.end();
-    
+
 });
 
+router.route('/process/login_page').all(function (req, res) {
+    if (req.session.user) {
+        res.redirect('/open_home');
+    } else
+        res.render('log_in');
+});
+var check_dup = function (id, callback) {
+    pool.getConnection(function (err, conn) {
+        if (err) {
+            if (conn) {
+                conn.release();
+            }
+            callback(err, null);
+            return;
+        }
 
+        var data = {
+            member_id: id
+        };
+        var exec = conn.query('select member_id from member where member_id =?; ', id, function (err, result) {
+            conn.release();
+            console.log('실행 대상 ' + exec.sql);
+            if (err) {
+                console.log('err');
+                callback(err, all);
+            }
+            callback(null, result);
+        });
+    });
+}
 
-router.route('/process/adduser').post(function(req,res){
-   
-    var paramId =  req.body.id||req.query.id;
-    var parampassword =  req.body.password||req.query.password;
-    var paramname  = req.body.name || req.query.name;
-    
-    if(pool){
-        adduser(paramId,parampassword,paramname,function(err,adduser){
-            if(err){
-                res.writeHead('200',{'content-type':'text/html;charset = utf-8'});
+var check_username_dup = function (username, callback) {
+    pool.getConnection(function (err, conn) {
+        if (err) {
+            if (conn) {
+                conn.release();
+            }
+            callback(err, null);
+            return;
+        }
+        var data = {
+            member_user_name: username
+        };
+        var exec = conn.query('select member_user_name from member where member_user_name  =?; ', username, function (err, result) {
+            conn.release();
+            console.log('실행 대상 ' + exec.sql);
+            if (err) {
+                callback(err, null);
+            }
+            console.dir(result);
+
+            callback(null, result);
+        });
+    });
+}
+router.route('/process/checkId').get(function (req, res) {
+    var check_id = req.param('id');
+    console.log(check_id);
+    check_dup(check_id, function (err, rows) {
+        if (err) throw err;
+        else {
+            if (rows.length > 0)
+                res.send({
+                    rows: rows
+                });
+            else
+                res.send();
+        }
+        return;
+    });
+});
+router.route('/process/check_user_name').get(function (req, res) {
+    var check_user_name = req.param('user_name');
+    console.log(check_user_name);
+    check_username_dup(check_user_name, function (err, rows) {
+        if (err) throw err;
+        else {
+            console.dir(rows);
+            if (rows.length > 0)
+                res.send({
+                    rows: rows
+                });
+            else
+                res.send();
+        }
+        return;
+    });
+});
+
+router.route('/process/adduser').post(function (req, res) {
+
+    var param_Id = req.body.user_id || req.query.user_id;
+    var param_password = req.body.password || req.query.password;
+    var param_real_name = req.body.real_name || req.query.real_name;
+    var param_user_name = req.body.user_name || req.query.user_name;
+    var param_student_id = req.body.student_id || req.query.student_id;
+    var param_phone = req.body.phone || req.query.phone;
+    var blog = req.body.blog || req.query.blog;
+    var email = req.body.email || req.query.email;
+
+    if (pool) {
+        adduser(param_Id, param_password, param_real_name, param_user_name, param_student_id, param_phone, blog, email, function (err, adduser) {
+            if (err) {
+                res.writeHead('200', {
+                    'content-type': 'text/html;charset = utf-8'
+                });
                 res.write("<h1>오류발생</h1>");
                 res.end();
                 return;
             }
-            if(adduser){
-                res.writeHead('200',{'content-type':'text/html;charset = utf-8'});
-                res.write("<h1>사용자 추가완료</h1>");
-                res.end();
-            
-            }
-            else{
-                res.writeHead('200',{'content-type':'text/html;charset = utf-8'});
+            if (adduser) {
+                res.send('<script type="text/javascript">alert("관리자 승인 후 사용 가능합니다");</script><script type="text/javascript"> location.href="/process/login_page"; </script>');
+            } else {
+                res.writeHead('200', {
+                    'content-type': 'text/html;charset = utf-8'
+                });
                 res.write("<h1>사용자 추가실패</h1>");
                 res.end();
             }
-        }
-                );
-                    }
-        else{
-                res.writeHead('200',{'content-type':'text/html;charset = utf-8'});
-                res.write("<h1>데이터베이스 연결실패</h1>");
-                res.end();
-            
-        }
-                });
-router.route('/process/adduserpage').get(function(req,res){
+        });
+    } else {
+        res.writeHead('200', {
+            'content-type': 'text/html;charset = utf-8'
+        });
+        res.write("<h1>데이터베이스 연결실패</h1>");
+        res.end();
+
+    }
+});
+router.route('/process/adduserpage').get(function (req, res) {
     console.log('adduserpage');
-     res.render('sign_up', {
-        
-        
-    });
-
-   /* var staticPath = __dirname + '/public';
-      fs.readFile( staticPath+'/adduser.html', (err, data) => {
-                res.writeHead(200, {'Content-Type': 'text/html'+';charset=utf-8'});
-                res.end(data);
-            });*/
+    res.render('sign_up', {});
 });
 
 
-app.all('/',function(req,res){
-//   res.render('log_in', {
-        
-        
-  //  });
+app.all('/', function (req, res) {
 
-    res.redirect('/index') ;
+    res.redirect('/index');
 });
 
-app.use('/board',board);
-app.use('/',router);
+
+//app.use('/board', board);
+app.use('/open_home', open_home);
+
+app.use('/', router);
+app.use('/board', board);
+
+
 app.use(expressErrorHandler.httpError(404));
 app.use(errorHandler);
+http.createServer(app).listen(app.get('port'), function () {
 
-http.createServer(app).listen(app.get('port'),function(){
-   
-   
 });

@@ -33,45 +33,29 @@
         <section class="login-form">
             <form method="post" action="/process/adduser" autocomplete="off" role="login">
                 <section>
-                    <h4 id=c heck_id>SIGN UP</h4>
+                    <h4 id=c heck_id>회원가입</h4>
                 </section>
-                <input name="user_id" id="user_id" autocomplete="off" required placeholder="ID" class="form-control input-lg" />
-                <input type="password" id="password" name="password" required placeholder="PASSWORD" autocomplete="new-password" class="form-control input-lg" />
-                <input type="password" id="password_confirm" name="password_confirm" required placeholder="PASSWORD CONFIRM" autocomplete="new-password" class="form-control input-lg" />
-                <input type="text" id="user_name" name="user_name" required placeholder="NAME" class="form-control input-lg" />
-                <input type="text" id="phone" name="phone" required placeholder="PHONE" class="form-control input-lg" />
-                <input type="text" id="student_id" name="student_id" required placeholder="STUDENT ID" class="form-control input-lg" />
-                <button type="submit" name="go" class="btn btn-block btn-info">CONFIRM</button>
-
+                <input name="user_id" id="user_id" autocomplete="off" required placeholder="아이디(필수)" class="form-control input-lg" />
+                <p id="check_user_id"></p>
+                <input type="password" id="password" name="password" required placeholder="패스워드(필수)" autocomplete="new-password" class="form-control input-lg" />
+                <input type="password" id="password_confirm" name="password_confirm" required placeholder="패스워드 확인(필수)" autocomplete="new-password" class="form-control input-lg" />
+                <p id="check_password_confirm"></p>
+                <input type="text" id="real_name" name="real_name" required placeholder="실제 이름(필수)" class="form-control input-lg" />
+                <input type="text" id="user_name" name="user_name" required placeholder="사용 이름(필수)" class="form-control input-lg" />
+                <p id="check_user_name"></p>
+                <input type="text" id="student_id" name="student_id" required placeholder="입학년도(2자리) (필수)" class="form-control input-lg" />
+                <p id="check_student_id"></p>
+                <input type="text" id="phone" name="phone" required placeholder="연락 가능한 번호(필수)" class="form-control input-lg" />
+                <p id="check_phone"></p>
+                <input type="text" id="email" name="email" required placeholder="EMAIL(필수)" class="form-control input-lg" />
+                <input type="text" id="blog" name="blog" placeholder="블로그(선택)" class="form-control input-lg" />
+                <button type="submit" name="confirm" class="btn btn-block btn-info" id="btn_confirm">확인</button>
                 <section>
-                    <a href="/process/login_page">BACK</a>
+                    <a href="/process/login_page">돌아가기</a>
                 </section>
             </form>
         </section>
     </section>
-
-    <h1>add user</h1>
-    <form method="post" action="/process/adduser">
-        <table>
-            <tr>
-                <td><label> id :</label>
-                    <td>
-                        <input type="text" id="user_id" name="user_id">
-                    </td>
-            </tr>
-            <tr>
-                <td><label> password</label> </td>
-                <td><input type="password" id="password" name="password"></td>
-            </tr>
-
-            <tr>
-                <td><label> name</label> </td>
-                <td><input type="text" name="name"></td>
-            </tr>
-        </table>
-        <input type="submit" value="전송" name="">
-
-    </form>
 
 
 </body>
