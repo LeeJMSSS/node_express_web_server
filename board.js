@@ -53,11 +53,9 @@ router.get('/write', function (req, res, next) {
     });
 });
 var upload_file_search = function (paths, err) {
-
     var files = fs.readdirSync(paths); // 하위 폴더 내 파일 검색
     console.dir(files)
     return files;
-
 };
 router.post('/write', upload.array('file'), function (req, res) {
     var creator_id = req.session.user.id;
