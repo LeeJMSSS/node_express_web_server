@@ -31,36 +31,31 @@
     </button>
         <div class="collapse navbar-collapse" id="navbarResponsive">
             <ul class="navbar-nav navbar-sidenav" id="exampleAccordion">
-                <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Dashboard">
+                <li class="nav-item" data-toggle="tooltip" data-placement="right" title="홈">
                     <a class="nav-link" href="/open_home">
             <i class="fa fa-fw fa-dashboard"></i>
             <span class="nav-link-text">HOME</span>
           </a>
                 </li>
-                <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Charts">
-                    <a class="nav-link" href="charts.html">
-            <i class="fa fa-fw fa-area-chart"></i>
-            <span class="nav-link-text">Charts</span>
-          </a>
-                </li>
-                <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Tables">
+
+                <li class="nav-item" data-toggle="tooltip" data-placement="right" title="공지사항">
                     <a class="nav-link" href="tables.html">
-            <i class="fa fa-fw fa-table"></i>
-            <span class="nav-link-text">Boards</span>
+            <i class="fa fa-fw fa-wrench"></i>
+            <span class="nav-link-text">공지사항</span>
           </a>
                 </li>
-                <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Components">
+                <li class="nav-item" data-toggle="tooltip" data-placement="right" title="게시판">
                     <a class="nav-link nav-link-collapse collapsed" data-toggle="collapse" href="#collapseComponents" data-parent="#exampleAccordion">
-            <i class="fa fa-fw fa-wrench"></i>
+            <i class="fa fa-fw fa-table"></i>
             <span class="nav-link-text">게시판</span>
           </a>
                     <ul class="sidenav-second-level collapse" id="collapseComponents">
                         <li>
                             <a href="/open_home/free">자유게시판</a>
                         </li>
-                        <li>
+                    <!--    <li>
                             <a href="cards.html">Cards</a>
-                        </li>
+                        </li>-->
                     </ul>
                 </li>
                 <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Example Pages">
@@ -250,15 +245,15 @@
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+                        <h5 class="modal-title" id="exampleModalLabel">로그아웃?</h5>
                         <button class="close" type="button" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">×</span>
             </button>
                     </div>
-                    <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+                    <div class="modal-body">로그아웃 하시겠어요?</div>
                     <div class="modal-footer">
-                        <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                        <a class="btn btn-primary" href="/process/logout">Logout</a>
+                        <button class="btn btn-secondary" type="button" data-dismiss="modal">취소</button>
+                        <a class="btn btn-primary" href="/process/logout">로그아웃</a>
                     </div>
                 </div>
             </div>
