@@ -71,7 +71,6 @@ app.use(expressSession({
     saveUninitialized: true
 }));
 
-
 var authUser = function (id, password, callback) {
     console.log('auth User');
     pool.getConnection(function (err, conn) {
@@ -82,7 +81,6 @@ var authUser = function (id, password, callback) {
             callback(err, null);
             return;
         }
-        console.log('데이터 베이스 Thread id ' + conn.threadId);
         var columns = ['member_id', 'member_name', 'auth'];
         var tablename = 'member';
         var exec = conn.query("select ?? from member where member_id = ? and member_pwd =?", [columns, id, password], function (err, rows) {
@@ -94,9 +92,7 @@ var authUser = function (id, password, callback) {
                 callback(null, rows);
             } else {
                 callback(null, null);
-
             }
-
         });
     });
 }
@@ -173,7 +169,6 @@ app.post('/process/login', function (req, res) {
     }
 });
 
-
 app.get('/process/logout', function (req, res) {
     req.session.destroy();
     res.clearCookie('jeon_id');
@@ -182,13 +177,7 @@ app.get('/process/logout', function (req, res) {
 var router = express.Router();
 
 router.route('/index').all(function (req, res) {
-    // registerServiceWorker();
-    //    askPermission();
-    console.log("get client");
-    res.render('cover2', {
-
-    });
-
+    res.render('cover2', {});
 });
 var get_static_map = function (pathname) {
     var extension = path.extname(pathname); // 확장자를 구하는 메서드
@@ -313,7 +302,6 @@ router.route('/process/adduser').post(function (req, res) {
     var param_phone = req.body.phone || req.query.phone;
     var blog = req.body.blog || req.query.blog;
     var email = req.body.email || req.query.email;
-
     if (pool) {
         adduser(param_Id, param_password, param_real_name, param_user_name, param_student_id, param_phone, blog, email, function (err, adduser) {
             if (err) {
@@ -338,7 +326,7 @@ router.route('/process/adduser').post(function (req, res) {
         res.writeHead('200', {
             'content-type': 'text/html;charset = utf-8'
         });
-        res.write("<h1>데이터베이스 연결실패</h1>");
+
         res.end();
 
     }
@@ -354,14 +342,9 @@ app.all('/', function (req, res) {
     res.redirect('/index');
 });
 
-
-//app.use('/board', board);
 app.use('/open_home', open_home);
-
 app.use('/', router);
 app.use('/board', board);
-
-
 app.use(expressErrorHandler.httpError(404));
 app.use(errorHandler);
 http.createServer(app).listen(app.get('port'), function () {

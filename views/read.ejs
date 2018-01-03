@@ -23,7 +23,6 @@
             <td>
                 <%=row[0].creator_id%>
             </td>
-
         </tr>
         <tr>
             <td>제목</td>
@@ -50,10 +49,11 @@
             str = str.replace(/&lt;/g, "<");
             str = str.replace(/&gt;/g, ">");
             document.getElementById("contents").innerHTML = str;
+
         </script>
-        
-        
-        
+
+
+
         <tr>
             <td>첨부파일</td>
         </tr>
@@ -66,8 +66,6 @@
             <tr>
                 <td><a href=/board/download/<%=row[0].idx%>/<%=oneItem%>> <%=oneItem%>  </a></td>
             </tr>
-
-
             <%
      }
 %>
