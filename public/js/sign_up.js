@@ -4,8 +4,6 @@ var boolean_check_real_name = false;
 var boolean_check_password_confirm = false;
 var boolean_check_phone = false;
 var boolean_check_student_id = false;
-
-
 $(function duplicate_id() {
     $('#user_id').keyup(function () {
         var user_id = $('#user_id').val();
@@ -14,7 +12,6 @@ $(function duplicate_id() {
         if (user_id == ("")) {
             $('#check_user_id').html('<p style="color:red">아이디를 입력해주세요</p>');
             boolean_check_id = false;
-
             return;
         } else if (check_korean.test(user_id) || check_special.test(user_id)) {
             $('#check_user_id').html('<p style="color:red">영문 / 숫자만 입력가능합니다</p>');
@@ -56,7 +53,10 @@ $(function duplicate_name() {
             $('#check_user_name').html('<p style="color:red">특수문자 및 공백은 사용할수 없습니다</p>');
             boolean_check_user_name = false;
             return;
-        } else {
+        }else if(user_name.length>15){
+            
+        }
+        else {
             $.get('/process/check_user_name?user_name=' + $('#user_name').val(), function (result) {
                 if (result.rows != null) {
                     console.dir(result)
@@ -136,6 +136,7 @@ $(function check_pwd() {
         }
     });
 });
+
 $(function check_phone_form() {
 
     $('#phone').keyup(function () {

@@ -123,27 +123,6 @@ router.get('/list/:page', function (req, res, next) {
     });
 });
 
-router.get('/download/:idx/:path', function (req, res, next) {
-    var idx = req.params.idx;
-
-    console.dir(req.params.idx);
-    if (!req.session.user) {
-        res.redirect('/index');
-        res.end();
-        return;
-    }
-    pool.getConnection(function (err, connection) {
-        var query = "SELECT upload_file_path FROM basic_board where idx=" + idx;
-        connection.query(query, function (err, rows) {
-            if (err) console.error(err);
-            connection.release();
-            var paths = __dirname + "/" + rows[0].upload_file_path + req.params.path;
-            console.dir(paths);
-            res.download(paths);
-        });
-    });
-});
-
 router.get('/read/:idx', function (req, res) {
     if (!req.session.user) {
         res.redirect('/index');

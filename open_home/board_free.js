@@ -41,6 +41,9 @@ var upload = multer({
 var rename_upload_file = function () {
 
 };
+
+
+
 router.get('/', function (req, res) {
     res.redirect('/open_home/free/list/1');
 })
@@ -53,7 +56,7 @@ router.get('/write', function (req, res, next) {
     console.dir(req.session.user);
     res.render('./open_home/board_write', {
         title: "자유 게시판 글쓰기",
-        position:"free",
+        position: "free",
         id: req.session.user.id
     });
 });
@@ -74,7 +77,7 @@ router.post('/write', upload.array('file'), function (req, res) {
     var upload_file_path = '';
     var orginal_file_name = '';
     var date = new Date();
-    var cur_date = date.getTime().toString().substring(0,10);
+    var cur_date = date.getTime().toString().substring(0, 10);
 
     if (files.length > 0) {
         var directory = './uploads/open_home/board/free/' + cur_date + "_" + req.session.user.id + "/";
@@ -87,7 +90,7 @@ router.post('/write', upload.array('file'), function (req, res) {
             });
         }
     }
-    var datas = [name,passwd, title, content,  directory, cur_date];
+    var datas = [name, passwd, title, content, directory, cur_date];
     pool.getConnection(function (err, connection) {
         // Use the connection
         var sqlForInsertBoard = "insert into free(name,password,title,text,filename ,date ) values(?,?,?,?,?,?);";
@@ -111,8 +114,7 @@ router.get('/list/:page', function (req, res, next) {
     }
     var page = parseInt(req.params.page);
     var TABLE_ROWS;
-    
-    
+
     pool.getConnection(function (err, connection) {
         var query = "SELECT max(no) as max_id FROM free;"
         connection.query(query, function (err, count) {
@@ -126,7 +128,7 @@ router.get('/list/:page', function (req, res, next) {
             var start_no = TABLE_ROWS - page * 10;
             var end_no = TABLE_ROWS - (page - 1) * 10;
             query = "SELECT no,title, name ,replys,date,hit FROM free where no >" + start_no + " AND  no<=" + end_no + ";";
-            //  query = "SELECT no,title, name ,replys,date,hit FROM free";
+
             connection.query(query, function (err, rows) {
                 if (err) console.error(err);
 
@@ -136,7 +138,7 @@ router.get('/list/:page', function (req, res, next) {
                     page: page,
                     start_no: start_no,
                     end_no: end_no,
-                    position:"free",
+                    position: "free",
                     total_page: Math.ceil(TABLE_ROWS / 10)
                 });
                 connection.release();
@@ -145,26 +147,35 @@ router.get('/list/:page', function (req, res, next) {
     });
 });
 
-
-router.get('/download/:idx/:path', function (req, res, next) {
-    var idx = req.params.idx;
-
-    console.dir(req.params.idx);
-    if (!req.session.user) {
-        res.redirect('/index');
-        res.end();
-        return;
-    }
+var update_hit = function (no, hit) {
+    console.log('update hit ' + no + " " + hit);
     pool.getConnection(function (err, connection) {
-        var query = "SELECT upload_file_path FROM basic_board where idx=" + idx;
+        hit = hit + 1;
+        var query = "update free " + "set hit=" + hit + " where no=" + no;
         connection.query(query, function (err, rows) {
             if (err) console.error(err);
             connection.release();
-            var paths = __dirname + "/" + rows[0].upload_file_path + req.params.path;
-            console.dir(paths);
-            res.download(paths);
         });
     });
+}
+
+var get_upload_file_search = function (paths, err) {
+    var files = fs.readdirSync(paths);
+    console.dir(files)
+    return files;
+};
+
+
+var add_reply = function (no) {
+
+
+
+
+}
+router.post('/add_reply', function (req, res) {
+
+
+
 });
 
 router.get('/read/:idx', function (req, res) {
@@ -173,21 +184,45 @@ router.get('/read/:idx', function (req, res) {
         res.end();
         return;
     }
+
     pool.getConnection(function (err, connection) {
         console.log(req.params.idx);
-        var query = "SELECT no,name,title,text FROM free where no=" + req.params.idx;
+        var query = "SELECT no,name,title,text,hit,filename FROM free where no=" + req.params.idx;
         connection.query(query, function (err, rows) {
             if (err) console.error(err);
             connection.release();
             rows[0].text = rows[0].text.replace(/(?:\r\n|\r|\n)/g, "<br>");
             rows[0].text = rows[0].text.replace(/&lt;/g, "<");
             rows[0].text = rows[0].text.replace(/&gt;/g, ">");
+            update_hit(req.params.idx, rows[0].hit);
+            if (rows[0].filename != null)
+                var files = get_upload_file_search(rows[0].filename);
             res.render('./open_home/board_read', {
                 row: rows,
-                parent:"free",
-                
+                parent: "free",
+                file_url: "/open_home/free/download",
+                files: files
             });
+        });
+    });
+});
+router.get('/download/:idx/:path', function (req, res) {
 
+    var idx = req.params.idx;
+    console.dir(req.params.idx);
+    if (!req.session.user) {
+        res.redirect('/index');
+        res.end();
+        return;
+    }
+    pool.getConnection(function (err, connection) {
+        var query = "SELECT filename FROM free where no=" + idx;
+        connection.query(query, function (err, rows) {
+            if (err) console.error(err);
+            connection.release();
+            var paths =rows[0].filename + req.params.path;
+            console.dir(paths);
+            res.download(paths);
         });
     });
 });
