@@ -34,7 +34,7 @@
                 </li>
 
                 <li class="nav-item" data-toggle="tooltip" data-placement="right" title="공지사항">
-                    <a class="nav-link" href="tables.html">
+                    <a class="nav-link" href="/open_home/noti">
             <i class="fa fa-fw fa-wrench"></i>
             <span class="nav-link-text">공지사항</span>
           </a>
@@ -48,7 +48,7 @@
                         <li>
                             <a href="/open_home/free">자유게시판</a>
                         </li>
-                        
+
                     </ul>
                 </li>
                 <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Example Pages">
@@ -133,7 +133,7 @@
                     <a href="/open_home">OPEN SPLUG</a>
                 </li>
                 <li class="breadcrumb-item">
-                    <a href="/open_home/free">자유게시판</a>
+                    <a href="/open_home/<%=parent%>"><%=position%></a>
                 </li>
                 <li class="breadcrumb-item active">
                     <%=row[0].title%>
@@ -178,6 +178,7 @@
                                 str = str.replace(/&lt;/g, "<");
                                 str = str.replace(/&gt;/g, ">");
                                 document.getElementById("contents").innerHTML = str;
+
                             </script>
                             <tr>
                                 <td>첨부파일</td>

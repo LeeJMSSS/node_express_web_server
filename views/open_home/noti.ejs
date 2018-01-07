@@ -2,12 +2,9 @@
 <html>
 
 <head>
-    <script src="/javascripts/jquery-1.11.2.min.js"></script>
     <title>
         <%= title %>
     </title>
-    <link rel='stylesheet' href='/public/css/board_write.css' />
-
 
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -149,96 +146,131 @@
 
             </ol>
 
-
-
             <div class="card mb-3">
                 <div class="card-header">
                     <i class="fa fa-table"> <%=title%></i>
 
+                    <div class="write_board">
+                        <a href=/open_home/<%=position%>/write>글쓰기</a>
+                    </div>
+
                 </div>
+
 
                 <div class="card-body">
                     <div class="table-responsive">
-                        <form action="/open_home/<%=position%>/write" method="post" onsubmit="return onWriteSubmit()" enctype="multipart/form-data">
-                            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                                <tr>
-                                    <td>작성자</td>
-                                    <td>
-                                        <p name="creator_id" id="creator_id">
-                                            <%=id%>
-                                        </p>
-                                    </td>
-
-                                </tr>
-                                <tr>
-                                    <td>제목</td>
-                                    <td><input type="text" name="title" id="title" width="100%" required/></td>
-                                </tr>
+                        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                            <thead>
                                 <tr>
 
-                                    <td>내용</td>
-                                    <td><textarea name="contents" id="contents" class="box_text_area_size" onkeydown="resize(this)" onkeyup="resize(this)" required></textarea></td>
-                                </tr>
+                                    <th>작성자</th>
+                                    <th>제목</th>
+                                    <th>조회수</th>
+                                    <th>수정일</th>
 
-                                <tr>
-                                    <td>첨부파일</td>
-                                    <td><input type="file" name="file" id="file" multiple="multiple" /></td>
                                 </tr>
-                                <tr>
-                                    <td colspan="2">
-                                        <button type="submit">확인</button>
-                                    </td>
-                                </tr>
-                            </table>
-                        </form>
+                            </thead>
+                            <tbody>
+                                <%
+     for(var i=rows.length-1; i>=0; i--)
+     {
+        var oneItem = rows[i];
+          var oneItem = rows[i];
+         var date = new Date(oneItem.date*1000);
+         var year =  date.getFullYear();
+         var month =  date.getMonth()+1;
+         var day =  date.getDay()+1;
+         var hour = date.getHours();
+         var minute = date.getMinutes();
+         var result =  year+"/"+month+"/"+day+" "+hour+":"+minute;
+%>
+                                    <tr>
+                                        <td>
+                                            <%=oneItem.name%>
+                                        </td>
+                                        <td><a href=/open_home/free/read/<%=oneItem.no%>> <%=oneItem.title+"  ["+oneItem.replys+"]"%> </a></td>
+                                        <td>
+                                            <%=oneItem.hit%>
+                                        </td>
+                                        <td>
+                                            <%=result%>
+                                        </td>
+                                    </tr>
+                                    <%
+     }
+%>
+                            </tbody>
+                        </table>
                     </div>
+
+                    <%if(page!=1)         { %>
+                        <a href="/open_home/free/list/<%=page-1%>">
+                            <%=page-1%>
+                        </a>
+                        <%}%>
+                            <span><%=page%></span>
+                            <%if(page!=total_page){%>
+                                <a href="/open_home/free/list/<%=page+1%>">
+                                    <%=page+1%>
+                                </a>
+                                <%}%>
+
+                                    <%if(page!=total_page){%>
+                                        <span> ...</span>
+                                        <a href="/open_home/free/list/<%=total_page%>">
+                                            <%=total_page%>
+                                        </a>
+                                        <%}%>
+
                 </div>
-                <script>
-                    function resize(obj) {
-                        obj.style.height = "1px";
-                        obj.style.height = (12 + obj.scrollHeight) + "px";
-                    }
 
-                </script>
-                <script>
-                    function onWriteSubmit() {
-                        if ($("#creator_id").val().trim() == "") {
-                            var message = "아이디를 입력해 주세요";
-                            $("#creator_id").val("");
-                            $("#creator_id").focus();
-                            alert(message);
-                            return false;
-                        }
-
-                        if ($("#title").val().trim() == "") {
-                            var message = "제목을 입력해 주세요";
-                            $("#title").val("");
-                            $("#title").focus();
-                            alert(message);
-                            return false;
-                        }
-
-                        if ($("#content").val().trim() == "") {
-                            var message = "본문 내용을 입력해 주세요";
-                            $("#content").val("");
-                            $("#content").focus();
-                            alert(message);
-                            return false;
-                        }
-
-                        if ($("#passwd").val().trim() == "") {
-                            var message = "패스워드를 입력해 주세요";
-                            $("#passwd").val("");
-                            $("#passwd").focus();
-                            alert(message);
-                            return false;
-                        }
-                    }
-
-                </script>
             </div>
         </div>
+
+        <!-- /.container-fluid-->
+        <!-- /.content-wrapper-->
+        <footer class="sticky-footer">
+            <div class="container">
+                <div class="text-center">
+                    <small>Copyright © SPLUG 2017</small>
+                </div>
+            </div>
+        </footer>
+        <!-- Scroll to Top Button-->
+        <a class="scroll-to-top rounded" href="#page-top">
+      <i class="fa fa-angle-up"></i>
+    </a>
+        <!-- Logout Modal-->
+        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">로그아웃?</h5>
+                        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">×</span>
+            </button>
+                    </div>
+                    <div class="modal-body">로그아웃 하시겠어요?</div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" type="button" data-dismiss="modal">취소</button>
+                        <a class="btn btn-primary" href="/process/logout">로그아웃</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Bootstrap core JavaScript-->
+        <script src="/open_home_resource/vendor/jquery/jquery.min.js "></script>
+        <script src="/open_home_resource/vendor/bootstrap/js/bootstrap.bundle.min.js "></script>
+        <!-- Core plugin JavaScript-->
+        <script src="/open_home_resource/vendor/jquery-easing/jquery.easing.min.js "></script>
+        <!-- Page level plugin JavaScript-->
+        <script src="/open_home_resource/vendor/chart.js/Chart.min.js "></script>
+        <!-- Custom scripts for all pages-->
+        <script src="/open_home_resource/js/sb-admin.min.js "></script>
+        <!-- Custom scripts for this page-->
+        <script src="/open_home_resource/js/sb-admin-charts.min.js "></script>
     </div>
+
 
 </body>
 
