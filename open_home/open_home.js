@@ -5,12 +5,17 @@ var expressSession = require('express-session');
 var mkdir = require('mkdirp');
 var fs = require('fs');
 var board_free = require('./board_free');
+var board_noti = require('./board_noti');
 
 var pool = mysql.createPool({
     connectionLimit: 3,
     host: 'localhost',
     user: 'root',
- 
+
+
+    database: 'splug',
+    password: 'wjswocjf20'
+
 });
 
 var multer = require('multer');
@@ -146,9 +151,7 @@ router.get('/read/:idx', function (req, res) {
     });
 });
 
-
 router.use('/free', board_free);
-
-
+router.use('/noti', board_noti);
 
 module.exports = router;

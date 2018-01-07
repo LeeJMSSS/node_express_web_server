@@ -18,7 +18,9 @@ var app = express();
 var pool = mysql.createPool({
     coonectionLimit: 10,
     host: 'localhost',
-
+    user: 'root',
+    database:'splug',
+    password:'wjswocjf20',
     debug: false
 });
 
@@ -105,7 +107,7 @@ var adduser = function (id, password, real_name, user_name, student_id, phone, b
             callback(err, null);
             return;
         }
-        console.log('데이터 베이스 연결 스레드 id' + conn.threadId);
+   
         var data = {
             member_id: id,
             member_name: real_name,
@@ -119,7 +121,7 @@ var adduser = function (id, password, real_name, user_name, student_id, phone, b
         };
         var exec = conn.query('insert into member set ?; ', data, function (err, result) {
             conn.release();
-            console.log('실행 대상 ' + exec.sql);
+          
             if (err) {
                 console.log('err');
                 callback(err, all);
@@ -152,12 +154,12 @@ app.post('/process/login', function (req, res) {
                     return;
                 } else {
                     req.session.user = {
-
                         id: paramId,
                         password: password,
-                        name: rows.name,
+                        name: rows[0].member_name,
                         authorized: true
                     };
+                    console.dir(rows);
                     res.redirect('/open_home');
                 }
             } else {

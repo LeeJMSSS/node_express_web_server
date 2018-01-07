@@ -39,7 +39,7 @@
                 </li>
 
                 <li class="nav-item" data-toggle="tooltip" data-placement="right" title="공지사항">
-                    <a class="nav-link" href="tables.html">
+                    <a class="nav-link" href="/open_home/noti">
             <i class="fa fa-fw fa-wrench"></i>
             <span class="nav-link-text">공지사항</span>
           </a>
@@ -53,7 +53,7 @@
                         <li>
                             <a href="/open_home/free">자유게시판</a>
                         </li>
-                    <!--    <li>
+                        <!--    <li>
                             <a href="cards.html">Cards</a>
                         </li>-->
                     </ul>
@@ -176,6 +176,7 @@
      {
         var oneItem = rows[i];
           var oneItem = rows[i];
+         //var date = new Date(oneItem.date*1000);
          var date = new Date(oneItem.date*1000);
          var year =  date.getFullYear();
          var month =  date.getMonth()+1;
@@ -188,7 +189,7 @@
                                         <td>
                                             <%=oneItem.name%>
                                         </td>
-                                        <td><a href=/open_home/free/read/<%=oneItem.no%>> <%=oneItem.title+"  ["+oneItem.replys+"]"%> </a></td>
+                                        <td><a href=/open_home/<%=parent%>/read/<%=oneItem.no%>> <%=oneItem.title+"  ["+oneItem.replys+"]"%> </a></td>
                                         <td>
                                             <%=oneItem.hit%>
                                         </td>
@@ -204,20 +205,20 @@
                     </div>
 
                     <%if(page!=1)         { %>
-                        <a href="/open_home/free/list/<%=page-1%>">
+                        <a href="/open_home/<%=parent%>/list/<%=page-1%>">
                             <%=page-1%>
                         </a>
                         <%}%>
                             <span><%=page%></span>
                             <%if(page!=total_page){%>
-                                <a href="/open_home/free/list/<%=page+1%>">
+                                <a href="/open_home/<%=parent%>/list/<%=page+1%>">
                                     <%=page+1%>
                                 </a>
                                 <%}%>
 
                                     <%if(page!=total_page){%>
                                         <span> ...</span>
-                                        <a href="/open_home/free/list/<%=total_page%>">
+                                        <a href="/open_home/<%=parent%>/list/<%=total_page%>">
                                             <%=total_page%>
                                         </a>
                                         <%}%>
