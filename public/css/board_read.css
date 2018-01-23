@@ -3,24 +3,32 @@
     -moz-box-sizing: border-box;
     box-sizing: border-box;
     width: 100%;
-    border: 1px solid #999999;
-    margin: 5px 0;
-
-    padding: 3px;
 }
 
 textarea {
     width: 100%;
-    border: 1px solid #999999;
-    margin: 5px 0;
-    padding: 3px;
     overflow: visible;
 }
 
-.box_title_size {
+.table_box_size {
+
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
     width: 100%;
+}
+
+td {
+    padding: 0;
+    margin: 0;
+    border-collapse: collapse;
+}
+
+.table_box_button {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    position: absolute;
+    right: 0;
 
 }

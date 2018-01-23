@@ -162,7 +162,7 @@
                         <form action="/open_home/<%=position%>/write" method="post" onsubmit="return onWriteSubmit()" enctype="multipart/form-data">
                             <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                 <tr>
-                                    <td>작성자</td>
+                                    <td width="20%">작성자</td>
                                     <td>
                                         <p name="creator_id" id="creator_id">
                                             <%=id%>
@@ -171,11 +171,10 @@
 
                                 </tr>
                                 <tr>
-                                    <td>제목</td>
-                                    <td><input type="text" name="title" id="title" width="100%" required/></td>
+                                    <td>제목</td> 
+                                    <td><input type="text" name="title" id="title" class= "box_title_size" width="100%" required/></td>
                                 </tr>
                                 <tr>
-
                                     <td>내용</td>
                                     <td><textarea name="contents" id="contents" class="box_text_area_size" onkeydown="resize(this)" onkeyup="resize(this)" required></textarea></td>
                                 </tr>
