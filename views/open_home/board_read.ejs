@@ -16,6 +16,9 @@
     <link href="/open_home_resource/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
     <link href="/open_home_resource/vendor/datatables/dataTables.bootstrap4.css" rel="stylesheet">
     <link href="/open_home_resource/css/sb-admin.css" rel="stylesheet">
+    <link href="/css/board_read.css" rel="stylesheet">
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/1.10.0/jquery.min.js"></script>
+    <script src="/js/board_read.js "></script>
 </head>
 
 <body class="fixed-nav sticky-footer bg-dark" id="page-top">
@@ -119,8 +122,15 @@
             <ul class="navbar-nav ml-auto">
 
                 <li class="nav-item">
+                    <a class="nav-link" id="user_name">
+            <i class="fa fa-fw fa-sign-out"></i><%=user_name%></a>
+                </li>
+            </ul>
+            <ul class="navbar-nav">
+
+                <li class="nav-item">
                     <a class="nav-link" data-toggle="modal" data-target="#exampleModal">
-            <i class="fa fa-fw fa-sign-out"></i>로그아웃</a>
+            <i class="fa fa-fw "></i>로그아웃</a>
                 </li>
             </ul>
         </div>
@@ -133,10 +143,14 @@
                     <a href="/open_home">OPEN SPLUG</a>
                 </li>
                 <li class="breadcrumb-item">
-                    <a href="/open_home/<%=parent%>"><%=position%></a>
+                    <a href="/open_home/<%=parent%>" id="board_position">
+                        <%=position%>
+                    </a>
                 </li>
                 <li class="breadcrumb-item active">
-                    <%=row[0].title%>
+                    <a id="board_idx">
+                        <%=idx%>
+                    </a>
                 </li>
             </ol>
             <div class="card mb-3">
@@ -151,7 +165,7 @@
 
                         <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                             <tr>
-                                <td>작성자</td>
+                                <td width="20%">작성자</td>
                                 <td>
                                     <%=row[0].name%>
                                 </td>
@@ -199,10 +213,29 @@
                             </tr>
                             <tr>
                                 <td>댓글</td>
-                                <td></td>
-                            </tr>
+                                <td>
+                                    <div id="comment_list">
+                                    </div>
 
+
+                                </td>
+                                <form name="comment_form">
+                                    <table class="table_box_size">
+                                        <tr>
+                                            <td>
+                                                <textarea name="comment_content" id="comment_contents" class="box_text_area_size" onkeydown="resize(this)" required></textarea>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <button type="submit" id="comment_submit" class="table_box_button">확인</button>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </form>
+                            </tr>
                             <a href="/open_home/free/"> 목록으로  </a>
+
                         </table>
                     </div>
                 </div>
@@ -243,6 +276,14 @@
         <script src="/open_home_resource/vendor/chart.js/Chart.min.js "></script>
         <script src="/open_home_resource/js/sb-admin.min.js "></script>
         <script src="/open_home_resource/js/sb-admin-charts.min.js "></script>
+
+        <script>
+            function resize(obj) {
+                obj.style.height = "1px";
+                obj.style.height = (12 + obj.scrollHeight) + "px";
+            }
+
+        </script>
     </div>
 </body>
 

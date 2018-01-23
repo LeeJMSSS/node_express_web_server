@@ -204,24 +204,33 @@
                         </table>
                     </div>
 
-                    <%if(page!=1)         { %>
-                        <a href="/open_home/<%=parent%>/list/<%=page-1%>">
-                            <%=page-1%>
+                    <%if(page>1)         { %>
+                        <a href="/open_home/<%=parent%>/list/<%=1%>">
+                            <%=1%>
                         </a>
-                        <%}%>
-                            <span><%=page%></span>
-                            <%if(page!=total_page){%>
-                                <a href="/open_home/<%=parent%>/list/<%=page+1%>">
-                                    <%=page+1%>
-                                </a>
-                                <%}%>
 
+                        <%if(page-5>1){%>
+
+                            <a href="/open_home/<%=parent%>/list/<%=page-5%>"> ...
+                    </a>
+                            <%}%>
+
+
+                                <%}%>
+                                    <span><%=page%></span>
                                     <%if(page!=total_page){%>
-                                        <span> ...</span>
-                                        <a href="/open_home/<%=parent%>/list/<%=total_page%>">
-                                            <%=total_page%>
+                                        <a href="/open_home/<%=parent%>/list/<%=page+1%>">
+                                            <%=page+1%>
                                         </a>
                                         <%}%>
+
+                                            <%if(page!=total_page&&page+5<total_page){%>
+                                                <a href="/open_home/<%=parent%>/list/<%=page+5%>"> ...
+                    </a>
+                                                <a href="/open_home/<%=parent%>/list/<%=total_page%>">
+                                                    <%=total_page%>
+                                                </a>
+                                                <%}%>
 
                 </div>
 

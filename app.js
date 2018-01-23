@@ -131,8 +131,6 @@ var adduser = function (id, password, real_name, user_name, student_id, phone, b
     });
 }
 
-
-
 app.post('/process/login', function (req, res) {
     var paramId = req.param('id');
     var password = req.param('password');

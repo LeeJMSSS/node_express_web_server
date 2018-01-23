@@ -135,12 +135,13 @@ router.get('/list/:page', function (req, res, next) {
 
                 res.render('open_home/board_list', {
                     title: '공지사항',
-                    parent:'noti',
+                    parent: 'noti',
                     rows: rows,
                     page: page,
                     start_no: start_no,
                     end_no: end_no,
                     position: "noti",
+                    user_name: req.session.user.name,
                     total_page: Math.ceil(TABLE_ROWS / 10)
                 });
                 connection.release();
@@ -202,8 +203,10 @@ router.get('/read/:idx', function (req, res) {
             res.render('./open_home/board_read', {
                 row: rows,
                 parent: "noti",
-                position:"공지사항",
+                position: "공지사항",
+                idx: req.params.idx,
                 file_url: "/open_home/noti/download",
+                user_name: req.session.user.name,
                 files: files
             });
         });

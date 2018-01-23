@@ -9,8 +9,6 @@ var pool = mysql.createPool({
     connectionLimit: 3,
     host: 'localhost',
     user: 'root',
-
-
     database: 'splug',
     password: 'wjswocjf20'
 });
@@ -19,6 +17,7 @@ var multer = require('multer');
 var upload = multer({
     dest: 'uploads'
 });
+
 var storage = multer.diskStorage({
     date: function (req, file, callback) {
         callback(null, Date.now());
@@ -41,15 +40,9 @@ var upload = multer({
     storage: storage
 });
 
-var rename_upload_file = function () {
-
-};
-
-
-
 router.get('/', function (req, res) {
     res.redirect('/open_home/free/list/1');
-})
+});
 router.get('/write', function (req, res, next) {
     if (!req.session.user) {
         res.redirect('/index');
@@ -58,17 +51,15 @@ router.get('/write', function (req, res, next) {
     }
     console.dir(req.session.user);
     res.render('./open_home/board_write', {
-        title: "자유 게시판 글쓰기",
+        title: "자유 게시판",
         position: "free",
         id: req.session.user.name
     });
 });
 var upload_file_search = function (paths, err) {
-
     var files = fs.readdirSync(paths); // 하위 폴더 내 파일 검색
     console.dir(files)
     return files;
-
 };
 router.post('/write', upload.array('file'), function (req, res) {
     var name = req.session.user.name;
@@ -109,7 +100,6 @@ router.post('/write', upload.array('file'), function (req, res) {
 });
 
 router.get('/list/:page', function (req, res, next) {
-
     if (!req.session.user) {
         res.redirect('/index');
         res.end();
@@ -168,12 +158,52 @@ var get_upload_file_search = function (paths, err) {
     console.dir(files)
     return files;
 };
-var add_reply = function (no) {
+router.post('/comment/insert', function (req, res) {
+    var no = req.body.idx;
+    var name = req.body.user_name;
+    var text = req.body.comment_data;
+    var category = "free";
+    var date = new Date().getTime();
+    var data = [no, name, text, category, date];
+    pool.getConnection(function (err, connection) {
+        // Use the connection
+        var sqlForInsertComment = "insert into board_comment(no,name,text,category,date) values(?,?,?,?,?);";
 
-}
-router.post('/add_reply', function (req, res) {
+        connection.query(sqlForInsertComment, data, function (err, rows) {
+            if (err) console.error("err : " + err);
+            res.end();
+            connection.release();
+            // Don't use the connection here, it has been returned to the pool.
+        });
+    });
+    res.json({
+        success: "Updated Successfully",
+        status: 200
+    });
+});
+
+
+router.post('/comment/list', function (req, res) {
+
+    var no = req.body.idx;
+    var category = "free";
+    var data = [no, category];
+
+
+    pool.getConnection(function (err, connection) {
+        var sqlForlistComment = "select name,text from board_comment where no= ?  and category =?;";
+        connection.query(sqlForlistComment, data, function (err, rows) {
+            if (err) console.error("err : " + err);
+
+            connection.release();
+            console.dir(rows);
+            res.json(rows);
+        })
+    })
+
 
 });
+
 router.get('/read/:idx', function (req, res) {
     if (!req.session.user) {
         res.redirect('/index');
@@ -181,7 +211,6 @@ router.get('/read/:idx', function (req, res) {
         return;
     }
     pool.getConnection(function (err, connection) {
-        console.log(req.params.idx);
         var query = "SELECT no,name,title,text,hit,filename FROM free where no=" + req.params.idx;
         connection.query(query, function (err, rows) {
             if (err) console.error(err);
@@ -195,9 +224,9 @@ router.get('/read/:idx', function (req, res) {
             res.render('./open_home/board_read', {
                 row: rows,
                 parent: "free",
-
                 position: "자유게시판",
-
+                idx: req.params.idx,
+                user_name: req.session.user.name,
                 file_url: "/open_home/free/download",
                 files: files
             });
@@ -224,5 +253,6 @@ router.get('/download/:idx/:path', function (req, res) {
         });
     });
 });
+
 
 module.exports = router;
