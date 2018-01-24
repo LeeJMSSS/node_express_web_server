@@ -18,8 +18,8 @@ var pool = mysql.createPool({
     coonectionLimit: 10,
     host: 'localhost',
     user: 'root',
-    database:'splug',
-    password:'wjswocjf20',
+    database: 'splug',
+    password: 'wjswocjf20',
     debug: false
 });
 
@@ -106,7 +106,7 @@ var adduser = function (id, password, real_name, user_name, student_id, phone, b
             callback(err, null);
             return;
         }
-   
+
         var data = {
             member_id: id,
             member_name: real_name,
@@ -120,7 +120,7 @@ var adduser = function (id, password, real_name, user_name, student_id, phone, b
         };
         var exec = conn.query('insert into member set ?; ', data, function (err, result) {
             conn.release();
-          
+
             if (err) {
                 console.log('err');
                 callback(err, all);
@@ -154,6 +154,7 @@ app.post('/process/login', function (req, res) {
                         id: paramId,
                         password: password,
                         name: rows[0].member_name,
+                        auth = rows[0].auth,
                         authorized: true
                     };
                     console.dir(rows);
