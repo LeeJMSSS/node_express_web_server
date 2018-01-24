@@ -51,64 +51,21 @@
                         <li>
                             <a href="/open_home/free">자유게시판</a>
                         </li>
-
-                    </ul>
-                </li>
-                <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Example Pages">
-                    <a class="nav-link nav-link-collapse collapsed" data-toggle="collapse" href="#collapseExamplePages" data-parent="#exampleAccordion">
-            <i class="fa fa-fw fa-file"></i>
-            <span class="nav-link-text">Example Pages</span>
-          </a>
-                    <ul class="sidenav-second-level collapse" id="collapseExamplePages">
                         <li>
-                            <a href="/index">Login Page</a>
+                            <a href="/open_home/lecture">강의</a>
                         </li>
                         <li>
-                            <a href="register.html">Registration Page</a>
+                            <a href="/open_home/armi">군인게시판</a>
                         </li>
                         <li>
-                            <a href="forgot-password.html">Forgot Password Page</a>
-                        </li>
-                        <li>
-                            <a href="blank.html">Blank Page</a>
-                        </li>
-                    </ul>
-                </li>
-                <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Menu Levels">
-                    <a class="nav-link nav-link-collapse collapsed" data-toggle="collapse" href="#collapseMulti" data-parent="#exampleAccordion">
-            <i class="fa fa-fw fa-sitemap"></i>
-            <span class="nav-link-text">Menu Levels</span>
-          </a>
-                    <ul class="sidenav-second-level collapse" id="collapseMulti">
-                        <li>
-                            <a href="#">Second Level Item</a>
-                        </li>
-                        <li>
-                            <a href="#">Second Level Item</a>
-                        </li>
-                        <li>
-                            <a href="#">Second Level Item</a>
-                        </li>
-                        <li>
-                            <a class="nav-link-collapse collapsed" data-toggle="collapse" href="#collapseMulti2">Third Level</a>
-                            <ul class="sidenav-third-level collapse" id="collapseMulti2">
-                                <li>
-                                    <a href="#">Third Level Item</a>
-                                </li>
-                                <li>
-                                    <a href="#">Third Level Item</a>
-                                </li>
-                                <li>
-                                    <a href="#">Third Level Item</a>
-                                </li>
-                            </ul>
+                            <a href="/open_home/gaein_project">개인 프로젝트</a>
                         </li>
                     </ul>
                 </li>
                 <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Link">
-                    <a class="nav-link" href="#">
+                    <a class="nav-link" href="/open_home/photo">
             <i class="fa fa-fw fa-link"></i>
-            <span class="nav-link-text">Link</span>
+            <span class="nav-link-text">Photo</span>
           </a>
                 </li>
             </ul>
@@ -205,7 +162,6 @@
 %>
 
                                         <a href=<%=file_url%>/<%=row[0].no%>/<%=oneItem%>> <%=oneItem%>  </a><br>
-
                                         <%
      }
 %>
@@ -223,7 +179,9 @@
                                     <table class="table_box_size">
                                         <tr>
                                             <td>
-                                                <textarea name="comment_content" id="comment_contents" class="box_text_area_size" onkeydown="resize(this)" required></textarea>
+                                                <p id="user_names">
+                                                    <%=user_name%>
+                                                </p> <textarea name="comment_content" id="comment_contents" class="box_text_area_size" onkeydown="resize(this)" required></textarea>
                                             </td>
                                         </tr>
                                         <tr>

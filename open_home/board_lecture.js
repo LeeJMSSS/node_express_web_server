@@ -41,7 +41,7 @@ var upload = multer({
 });
 
 router.get('/', function (req, res) {
-    res.redirect('/open_home/free/list/1');
+    res.redirect('/open_home/lecture/list/1');
 });
 router.get('/write', function (req, res, next) {
     if (!req.session.user) {
@@ -51,8 +51,8 @@ router.get('/write', function (req, res, next) {
     }
     console.dir(req.session.user);
     res.render('./open_home/board_write', {
-        title: "자유 게시판",
-        position: "free",
+        title: "강의",
+        position: "lecture",
         user_name: req.session.user.name
     });
 });
@@ -74,7 +74,7 @@ router.post('/write', upload.array('file'), function (req, res) {
     var cur_date = date.getTime().toString().substring(0, 10);
 
     if (files.length > 0) {
-        var directory = './uploads/open_home/board/free/' + cur_date + "_" + req.session.user.name + "/";
+        var directory = './uploads/open_home/board/lecture/' + cur_date + "_" + req.session.user.name + "/";
         mkdir(directory);
         var rows = files.length;
         for (var i = 0; i < rows; i++) {
@@ -87,11 +87,11 @@ router.post('/write', upload.array('file'), function (req, res) {
     var datas = [name, passwd, title, content, directory, cur_date];
     pool.getConnection(function (err, connection) {
         // Use the connection
-        var sqlForInsertBoard = "insert into free(name,password,title,text,filename ,date ) values(?,?,?,?,?,?);";
+        var sqlForInsertBoard = "insert into lecture(name,password,title,text,filename ,date ) values(?,?,?,?,?,?);";
 
         connection.query(sqlForInsertBoard, datas, function (err, rows) {
             if (err) console.error("err : " + err);
-            res.redirect('/open_home/free');
+            res.redirect('/open_home/lecture');
             connection.release();
             // Don't use the connection here, it has been returned to the pool.
         });
@@ -109,7 +109,7 @@ router.get('/list/:page', function (req, res, next) {
     var TABLE_ROWS;
 
     pool.getConnection(function (err, connection) {
-        var query = "SELECT max(no) as max_id FROM free;"
+        var query = "SELECT max(no) as max_id FROM lecture;"
         connection.query(query, function (err, count) {
             if (err) console.error(err);
             console.dir(count[0]);
@@ -120,20 +120,20 @@ router.get('/list/:page', function (req, res, next) {
 
             var start_no = TABLE_ROWS - page * 10;
             var end_no = TABLE_ROWS - (page - 1) * 10;
-            query = "SELECT no,title, name ,replys,date,hit FROM free where no >" + start_no + " AND  no<=" + end_no + ";";
+            query = "SELECT no,title, name ,replys,date,hit FROM lecture where no >" + start_no + " AND  no<=" + end_no + ";";
 
             connection.query(query, function (err, rows) {
                 if (err) console.error(err);
 
                 res.render('open_home/board_list', {
-                    title: '자유게시판',
+                    title: '강의',
                     rows: rows,
-                    parent: 'free',
+                    parent: 'lecture',
                     page: page,
                     start_no: start_no,
                     user_name: req.session.user.name,
                     end_no: end_no,
-                    position: "free",
+                    position: "lecture",
                     total_page: Math.ceil(TABLE_ROWS / 10)
                 });
                 connection.release();
@@ -146,7 +146,7 @@ var update_hit = function (no, hit) {
     console.log('update hit ' + no + " " + hit);
     pool.getConnection(function (err, connection) {
         hit = hit + 1;
-        var query = "update free " + "set hit=" + hit + " where no=" + no;
+        var query = "update lecture " + "set hit=" + hit + " where no=" + no;
         connection.query(query, function (err, rows) {
             if (err) console.error(err);
             connection.release();
@@ -157,7 +157,7 @@ var update_hit = function (no, hit) {
 var update_comment = function (no, replys) {
     console.log('replys ' + replys);
     pool.getConnection(function (err, connection) {
-        var query = "update free " + "set replys=" + replys + " where no=" + no;
+        var query = "update lecture " + "set replys=" + replys + " where no=" + no;
         connection.query(query, function (err, rows) {
             if (err) console.error(err);
             connection.release();
@@ -173,7 +173,7 @@ router.post('/comment/insert', function (req, res) {
     var no = req.body.idx;
     var name = req.body.user_name;
     var text = req.body.comment_data;
-    var category = "free";
+    var category = "lecture";
     var date = new Date().getTime();
     var data = [no, name, text, category, date];
     pool.getConnection(function (err, connection) {
@@ -194,7 +194,7 @@ router.post('/comment/insert', function (req, res) {
 
 router.post('/comment/list', function (req, res) {
     var no = req.body.idx;
-    var category = "free";
+    var category = "lecture";
     var data = [no, category];
     pool.getConnection(function (err, connection) {
         var sqlForlistComment = "select name,text from board_comment where no= ?  and category =?;";
@@ -217,15 +217,16 @@ router.get('/read/:idx', function (req, res) {
         return;
     }
     pool.getConnection(function (err, connection) {
-        var query = "SELECT no,name,title,text,hit,filename FROM free where no=" + req.params.idx;
+        var query = "SELECT no,name,title,text,hit,filename FROM lecture where no=" + req.params.idx;
         connection.query(query, function (err, rows) {
+            var files = "";
             if (err) console.error(err);
             connection.release();
             rows[0].text = rows[0].text.replace(/(?:\r\n|\r|\n)/g, "<br>");
             rows[0].text = rows[0].text.replace(/&lt;/g, "<");
             rows[0].text = rows[0].text.replace(/&gt;/g, ">");
             update_hit(req.params.idx, rows[0].hit);
-            if (rows[0].filename != null && rows[0].filename != '') {
+             if (rows[0].filename != null && rows[0].filename != '') {
 
                 if (fs.existsSync(rows[0].filename)) {
                     files = get_upload_file_search(rows[0].filename);
@@ -233,11 +234,11 @@ router.get('/read/:idx', function (req, res) {
             }
             res.render('./open_home/board_read', {
                 row: rows,
-                parent: "free",
-                position: "자유게시판",
+                parent: "lecture",
+                position: "강의",
                 idx: req.params.idx,
                 user_name: req.session.user.name,
-                file_url: "/open_home/free/download",
+                file_url: "/open_home/lecture/download",
                 files: files
             });
         });
@@ -252,7 +253,7 @@ router.get('/download/:idx/:path', function (req, res) {
         return;
     }
     pool.getConnection(function (err, connection) {
-        var query = "SELECT filename FROM free where no=" + idx;
+        var query = "SELECT filename FROM lecture where no=" + idx;
         connection.query(query, function (err, rows) {
             if (err) console.error(err);
             connection.release();

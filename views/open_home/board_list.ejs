@@ -53,66 +53,22 @@
                         <li>
                             <a href="/open_home/free">자유게시판</a>
                         </li>
-                        <!--    <li>
-                            <a href="cards.html">Cards</a>
-                        </li>-->
-                    </ul>
-                </li>
-                <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Example Pages">
-                    <a class="nav-link nav-link-collapse collapsed" data-toggle="collapse" href="#collapseExamplePages" data-parent="#exampleAccordion">
-            <i class="fa fa-fw fa-file"></i>
-            <span class="nav-link-text">Example Pages</span>
-          </a>
-                    <ul class="sidenav-second-level collapse" id="collapseExamplePages">
                         <li>
-                            <a href="login.html">Login Page</a>
+                            <a href="/open_home/lecture">강의</a>
                         </li>
                         <li>
-                            <a href="register.html">Registration Page</a>
+                            <a href="/open_home/armi">군인게시판</a>
                         </li>
                         <li>
-                            <a href="forgot-password.html">Forgot Password Page</a>
-                        </li>
-                        <li>
-                            <a href="blank.html">Blank Page</a>
+                            <a href="/open_home/gaein_project">개인 프로젝트</a>
                         </li>
                     </ul>
                 </li>
-                <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Menu Levels">
-                    <a class="nav-link nav-link-collapse collapsed" data-toggle="collapse" href="#collapseMulti" data-parent="#exampleAccordion">
-            <i class="fa fa-fw fa-sitemap"></i>
-            <span class="nav-link-text">Menu Levels</span>
-          </a>
-                    <ul class="sidenav-second-level collapse" id="collapseMulti">
-                        <li>
-                            <a href="#">Second Level Item</a>
-                        </li>
-                        <li>
-                            <a href="#">Second Level Item</a>
-                        </li>
-                        <li>
-                            <a href="#">Second Level Item</a>
-                        </li>
-                        <li>
-                            <a class="nav-link-collapse collapsed" data-toggle="collapse" href="#collapseMulti2">Third Level</a>
-                            <ul class="sidenav-third-level collapse" id="collapseMulti2">
-                                <li>
-                                    <a href="#">Third Level Item</a>
-                                </li>
-                                <li>
-                                    <a href="#">Third Level Item</a>
-                                </li>
-                                <li>
-                                    <a href="#">Third Level Item</a>
-                                </li>
-                            </ul>
-                        </li>
-                    </ul>
-                </li>
+
                 <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Link">
-                    <a class="nav-link" href="#">
+                    <a class="nav-link" href="/open_home/photo">
             <i class="fa fa-fw fa-link"></i>
-            <span class="nav-link-text">Link</span>
+            <span class="nav-link-text">Photo</span>
           </a>
                 </li>
             </ul>
@@ -126,8 +82,15 @@
             <ul class="navbar-nav ml-auto">
 
                 <li class="nav-item">
+                    <a class="nav-link" id="user_name">
+            <i class="fa fa-fw fa-sign-out"></i><%=user_name%></a>
+                </li>
+            </ul>
+            <ul class="navbar-nav">
+
+                <li class="nav-item">
                     <a class="nav-link" data-toggle="modal" data-target="#exampleModal">
-            <i class="fa fa-fw fa-sign-out"></i>Logout</a>
+            <i class="fa fa-fw "></i>로그아웃</a>
                 </li>
             </ul>
         </div>
@@ -162,27 +125,41 @@
                         <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                             <thead>
                                 <tr>
-
                                     <th>작성자</th>
                                     <th>제목</th>
-                                    <th>조회수</th>
-                                    <th>수정일</th>
-
+                                    <th>작성일</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <%
+                                if(rows!=null)
      for(var i=rows.length-1; i>=0; i--)
      {
         var oneItem = rows[i];
           var oneItem = rows[i];
          //var date = new Date(oneItem.date*1000);
          var date = new Date(oneItem.date*1000);
-         var year =  date.getFullYear();
-         var month =  date.getMonth()+1;
-         var day =  date.getDay()+1;
-         var hour = date.getHours();
-         var minute = date.getMinutes();
+        var year = date.getFullYear();
+		var month = ('0' + (date.getMonth() + 1)).slice(-2);	// Months are zero based. Add leading 0;
+var day  = ('0' + date.getDate()).slice(-2);			// Add leading 0.
+		var hour = date.getHours();
+		
+		var minute = ('0' + date.getMinutes()).slice(-2);		// Add leading 0.
+		var ampm = 'AM';
+		
+			
+	if (hour > 12) {
+		hour = hour - 12;
+		ampm = 'PM';
+	} else if (hour === 12) {
+		h = 12;
+		ampm = 'PM';
+	} else if (hour == 0) {
+		h = 12;
+	}
+	
+	
+   
          var result =  year+"/"+month+"/"+day+" "+hour+":"+minute;
 %>
                                     <tr>
@@ -190,9 +167,7 @@
                                             <%=oneItem.name%>
                                         </td>
                                         <td><a href=/open_home/<%=parent%>/read/<%=oneItem.no%>> <%=oneItem.title+"  ["+oneItem.replys+"]"%> </a></td>
-                                        <td>
-                                            <%=oneItem.hit%>
-                                        </td>
+                                    
                                         <td>
                                             <%=result%>
                                         </td>
