@@ -9,7 +9,6 @@ var bodyParser = require('body-parser'),
 
 var board = require('./board');
 var open_home = require('./open_home/open_home');
-
 var mysql = require('mysql');
 var expressErrorHandler = require('express-error-handler');
 var expressSession = require('express-session');
@@ -175,7 +174,7 @@ app.get('/process/logout', function (req, res) {
 var router = express.Router();
 
 router.route('/index').all(function (req, res) {
-    res.render('cover2', {});
+    res.render('cover', {});
 });
 var get_static_map = function (pathname) {
     var extension = path.extname(pathname); // 확장자를 구하는 메서드

@@ -140,6 +140,7 @@ router.get('/list/:page', function (req, res, next) {
                     page: page,
                     start_no: start_no,
                     end_no: end_no,
+                    user_name: req.session.user.name,
                     position: "noti",
                     user_name: req.session.user.name,
                     total_page: Math.ceil(TABLE_ROWS / 10)
@@ -161,6 +162,16 @@ var update_hit = function (no, hit) {
         });
     });
 }
+var update_comment = function (no, replys) {
+    console.log('replys ' + replys);
+    pool.getConnection(function (err, connection) {
+        var query = "update notice " + "set replys=" + replys + " where no=" + no;
+        connection.query(query, function (err, rows) {
+            if (err) console.error(err);
+            connection.release();
+        });
+    });
+}
 
 var get_upload_file_search = function (paths, err) {
     var files = fs.readdirSync(paths);
@@ -168,18 +179,46 @@ var get_upload_file_search = function (paths, err) {
     return files;
 };
 
+router.post('/comment/insert', function (req, res) {
+    var no = req.body.idx;
+    var name = req.body.user_name;
+    var text = req.body.comment_data;
+    var category = "notice";
+    var date = new Date().getTime();
+    var data = [no, name, text, category, date];
+    pool.getConnection(function (err, connection) {
+        // Use the connection
+        var sqlForInsertComment = "insert into board_comment(no,name,text,category,date) values(?,?,?,?,?);";
 
-var add_reply = function (no) {
-
-
-
-
-}
-router.post('/add_reply', function (req, res) {
-
-
-
+        connection.query(sqlForInsertComment, data, function (err, rows) {
+            if (err) console.error("err : " + err);
+            res.end();
+            connection.release();
+            // Don't use the connection here, it has been returned to the pool.
+        });
+    });
+    res.json({
+        success: "Updated Successfully",
+        status: 200
+    });
 });
+
+
+router.post('/comment/list', function (req, res) {
+    var no = req.body.idx;
+    var category = "notice";
+    var data = [no, category];
+    pool.getConnection(function (err, connection) {
+        var sqlForlistComment = "select name,text from board_comment where no= ?  and category =?;";
+        connection.query(sqlForlistComment, data, function (err, rows) {
+            if (err) console.error("err : " + err);
+            connection.release();
+            update_comment(no, rows.length);
+            res.json(rows);
+        });
+    });
+});
+
 
 router.get('/read/:idx', function (req, res) {
     if (!req.session.user) {
@@ -192,14 +231,20 @@ router.get('/read/:idx', function (req, res) {
         console.log(req.params.idx);
         var query = "SELECT no,name,title,text,hit,filename FROM notice where no=" + req.params.idx;
         connection.query(query, function (err, rows) {
+           var files = "";
+
             if (err) console.error(err);
             connection.release();
             rows[0].text = rows[0].text.replace(/(?:\r\n|\r|\n)/g, "<br>");
             rows[0].text = rows[0].text.replace(/&lt;/g, "<");
             rows[0].text = rows[0].text.replace(/&gt;/g, ">");
             update_hit(req.params.idx, rows[0].hit);
-            if (rows[0].filename != null && rows[0].filename != '')
-                var files = get_upload_file_search(rows[0].filename);
+              if (rows[0].filename != null && rows[0].filename != '') {
+
+                if (fs.existsSync(rows[0].filename)) {
+                    files = get_upload_file_search(rows[0].filename);
+                }
+            }
             res.render('./open_home/board_read', {
                 row: rows,
                 parent: "noti",

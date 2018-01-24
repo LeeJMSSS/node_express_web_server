@@ -11,7 +11,7 @@ $(function check_reply_confirm() {
     });
     $('form').submit(function () {
         var urls = document.getElementById("board_position").href;
-        var user_name = document.getElementById("user_name").innerText;
+        var user_name = document.getElementById("user_names").innerText;
         var comment_data = $('#comment_contents').val();
         var board_idx = document.getElementById("board_idx").innerText;
         urls = urls.substring(urls.lastIndexOf("/"));
@@ -33,9 +33,11 @@ function comment_insert(urls, data) {
         contentType: 'application/json',
         success: function (data) {
             $('#comment_contents').val("");
+            alert("등록 완료!");
             comment_list();
         }
     });
+
 }
 
 function comment_list() {
